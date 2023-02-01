@@ -1,0 +1,21 @@
+import _ from 'lodash';
+import UserService from '../services/user.service.js';
+import responseHandler from '../utils/responseHandler.js';
+import base64Util from '../utils/base64.js';
+
+/**
+ * Basic Auth Middleware
+ * Header expected:
+ * Authorization: Basic <username:password>
+ */
+const authMiddleware = () => async (req, res, next) => {
+    const basicAuth = _.get(req, 'headers.authorization');
+    if (_.isEmpty(basicAuth) || basicAuth === '') responseHandler(res, 'Unauthorized', 401);
+    const [ username, password ] = base64Util.decode(basicAuth).split(':');
+    const passwordMatch = await UserService.checkPassword(username, password);
+    if (passwordMatch) return next();
+    // Unauthorized
+    responseHandler(res, 'Unauthorized', 401);
+}
+
+export default authMiddleware;
