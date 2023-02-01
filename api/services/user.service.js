@@ -34,7 +34,7 @@ const updateUser = async (id, payload) => {
     const validUpdateKeys = _.pick(payload, ['first_name', 'last_name', 'password']);
     // Set query builder
     _.forEach(validUpdateKeys, async (value, key) => {
-        if (_.isEmpty(value) || '') return;
+        if (_.isEmpty(value)) return;
         if (key === 'password') {
             value = await createHash(value);
         }
