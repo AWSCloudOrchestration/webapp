@@ -10,9 +10,10 @@ import base64Util from '../utils/base64.js';
  */
 const authMiddleware = () => async (req, res, next) => {
     const basicAuth = _.get(req, 'headers.authorization');
+    const id = _.get(req, 'params.userId');
     if (_.isEmpty(basicAuth) || basicAuth === '') responseHandler(res, 'Unauthorized', 401);
-    const [ username, password ] = base64Util.decode(basicAuth).split(':');
-    const passwordMatch = await UserService.checkPassword(username, password);
+    const [username, password] = base64Util.decode(basicAuth).split(':');
+    const passwordMatch = await UserService.checkPassword(username, password, id);
     if (passwordMatch) return next();
     // Unauthorized
     responseHandler(res, 'Unauthorized', 401);
