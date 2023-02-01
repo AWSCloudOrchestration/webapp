@@ -8,10 +8,10 @@ let connection;
  */
 const createConnection = async () => {
     connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'mysql',
-        password: 'password',
-        database: 'webapp'
+        host: process.env.SQL_HOST || 'localhost',
+        user: process.env.SQL_USER || 'mysql',
+        password: process.env.SQL_PASS || 'password',
+        database: process.env.SQL_DB || 'webapp'
     });
     return connection;
 }

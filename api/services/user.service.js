@@ -2,6 +2,12 @@ import { executeQuery } from '../../db/sql/executor.js';
 import { createHash, checkHash } from '../utils/hashUtil.js';
 import _ from 'lodash';
 
+const checkForExistingUser = async (username) => {
+    const query = `SELECT * FROM users WHERE username="${username}"`;
+    const user = await executeQuery(query);
+    return user;
+}
+
 /**
  * Create new user
  * @param {Object} userPayload 
@@ -9,17 +15,21 @@ import _ from 'lodash';
  */
 const createUser = async (userPayload) => {
     const { first_name, last_name, username, password } = userPayload;
+    const existingUser = await checkForExistingUser(username);
+    if (existingUser) throw new Error('User already exists');
     const hashedPass = await createHash(password);
     const query = `INSERT INTO users (first_name, last_name, username, password) VALUES ("${first_name}", "${last_name}", "${username}", "${hashedPass}")`;
     // Create new user
     const user = await executeQuery(query);
+    delete user.password;
     return user;
 }
 
 const getUserInfo = async (id) => {
-    const query = `SELECT * FROM users WHERE id=${id}`;
+    const columns = `id, first_name, last_name, username, account_created, account_updated`;
+    const query = `SELECT ${columns} FROM users WHERE id=${id}`;
     const user = await executeQuery(query);
-    return user;
+    return user[0];
 }
 
 const checkPassword = async (username, password, id) => {
