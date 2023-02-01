@@ -11,8 +11,8 @@ const executeQuery = async (query, data = null) => {
         if (!connection) return;
         const [rows] = await connection.execute(query, data);
         return rows;
-    } catch {
-        console.error('Query execution failed.');
+    } catch(err) {
+        console.error('Query execution failed: ', err);
     }
 }
 
