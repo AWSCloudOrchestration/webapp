@@ -8,7 +8,9 @@ import responseHandler from "../utils/responseHandler.js";
  */
 export const createUser = async (req, res) => {
     const { body } = req;
-    await UserService.createUser(body);
+    await UserService.createUser(body).catch((e) => {
+        responseHandler(res, null, 400)
+    })
     responseHandler(res, null, 201);
 }
 
@@ -20,7 +22,7 @@ export const createUser = async (req, res) => {
 export const getUserInfo = async (req, res) => {
     const { params: { userId } } = req;
     const user = await UserService.getUserInfo(userId);
-    responseHandler(res, ...user);
+    responseHandler(res, user);
 }
 
 export const updateUser = async (req, res) => {
