@@ -9,8 +9,8 @@ import responseHandler from "../utils/responseHandler.js";
 export const createUser = async (req, res) => {
     try {
         const { body } = req;
-        await UserService.createUser(body);
-        responseHandler(res, null, 201);
+        const user = await UserService.createUser(body);
+        responseHandler(res, user, 201);
     } catch (err) {
         console.error(err.message);
         responseHandler(res, null, 400);

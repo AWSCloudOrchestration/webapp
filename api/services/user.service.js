@@ -14,16 +14,14 @@ const checkForExistingUser = async (username) => {
  * @param {Object} payload 
  * @returns {Object}
  */
-const validateRequestData = (payload) => {
-    const validKeys = _.pick(payload, ['first_name', 'last_name', 'password', 'username']);
+const validateRequestData = (payload, validList) => {
+    const validKeys = _.pick(payload, validList);
     _.forEach(validKeys, (value, key) => {
-        console.log(typeof value)
         if (typeof value !== 'string') throw new Error('Malformed data');
         if (key === 'username') {
             if (!validateEmail(value)) throw new Error('Username malformed');
         }
     })
-    console.log(validKeys);
     return validKeys;
 }
 
@@ -33,15 +31,16 @@ const validateRequestData = (payload) => {
  * @returns 
  */
 const createUser = async (userPayload) => {
-    const { first_name, last_name, username, password } = validateRequestData(userPayload);
+    const validList = ['first_name', 'last_name', 'password', 'username'];
+    const { first_name, last_name, username, password } = validateRequestData(userPayload, validList);
     const existingUser = await checkForExistingUser(username);
     if (existingUser.length > 0) throw new Error('User already exists');
     const hashedPass = await createHash(password);
     const query = `INSERT INTO users (first_name, last_name, username, password) VALUES ("${first_name}", "${last_name}", "${username}", "${hashedPass}")`;
     // Create new user
-    const user = await executeQuery(query);
-    delete user.password;
-    return user;
+    await executeQuery(query);
+    const user = await executeQuery(`SELECT id, first_name, last_name, username, account_created, account_updated FROM users WHERE username="${username}"`);
+    return user[0];
 }
 
 const getUserInfo = async (id) => {
@@ -60,14 +59,15 @@ const checkPassword = async (username, password, id) => {
 
 const updateUser = async (id, payload) => {
     let setQuery = 'SET';
-    const validUpdateKeys = validateRequestData(payload);
+    const validList = ['first_name', 'last_name', 'password'];
+    const validUpdateKeys = validateRequestData(payload, validList);
     // Set query builder
     _.forEach(validUpdateKeys, async (value, key) => {
         if (_.isEmpty(value)) return;
         if (key === 'password') {
-            value = await createHash(value);
-        }
-        setQuery += ` ${key}="${value}",`;
+            const pass = await createHash(value);
+            setQuery += ` ${key}="${pass}",`;
+        } else setQuery += ` ${key}="${value}",`;
     });
 
     // slice to remove comma at the end
