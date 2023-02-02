@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db/sql/executor.js';
 import { createHash, checkHash } from '../utils/hashUtil.js';
 import _ from 'lodash';
+import { validateEmail } from '../utils/stringUtils.js';
 
 const checkForExistingUser = async (username) => {
     const query = `SELECT * FROM users WHERE username="${username}"`;
@@ -9,14 +10,32 @@ const checkForExistingUser = async (username) => {
 }
 
 /**
+ * Validate request data
+ * @param {Object} payload 
+ * @returns {Object}
+ */
+const validateRequestData = (payload) => {
+    const validKeys = _.pick(payload, ['first_name', 'last_name', 'password', 'username']);
+    _.forEach(validKeys, (value, key) => {
+        console.log(typeof value)
+        if (typeof value !== 'string') throw new Error('Malformed data');
+        if (key === 'username') {
+            if (!validateEmail(value)) throw new Error('Username malformed');
+        }
+    })
+    console.log(validKeys);
+    return validKeys;
+}
+
+/**
  * Create new user
  * @param {Object} userPayload 
  * @returns 
  */
 const createUser = async (userPayload) => {
-    const { first_name, last_name, username, password } = userPayload;
+    const { first_name, last_name, username, password } = validateRequestData(userPayload);
     const existingUser = await checkForExistingUser(username);
-    if (existingUser) throw new Error('User already exists');
+    if (existingUser.length > 0) throw new Error('User already exists');
     const hashedPass = await createHash(password);
     const query = `INSERT INTO users (first_name, last_name, username, password) VALUES ("${first_name}", "${last_name}", "${username}", "${hashedPass}")`;
     // Create new user
@@ -41,7 +60,7 @@ const checkPassword = async (username, password, id) => {
 
 const updateUser = async (id, payload) => {
     let setQuery = 'SET';
-    const validUpdateKeys = _.pick(payload, ['first_name', 'last_name', 'password']);
+    const validUpdateKeys = validateRequestData(payload);
     // Set query builder
     _.forEach(validUpdateKeys, async (value, key) => {
         if (_.isEmpty(value)) return;
@@ -50,11 +69,9 @@ const updateUser = async (id, payload) => {
         }
         setQuery += ` ${key}="${value}",`;
     });
-    // Update account timestamp
-    const updatedTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    setQuery += ` account_updated="${updatedTime}"`;
+
     // slice to remove comma at the end
-    const query = `UPDATE users ` + setQuery + ` WHERE id=${id}`;
+    const query = `UPDATE users ` + setQuery.slice(0, -1) + ` WHERE id=${id}`;
     return executeQuery(query);
 }
 

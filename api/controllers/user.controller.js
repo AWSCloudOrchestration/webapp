@@ -7,11 +7,14 @@ import responseHandler from "../utils/responseHandler.js";
  * @param {Object} res 
  */
 export const createUser = async (req, res) => {
-    const { body } = req;
-    await UserService.createUser(body).catch((e) => {
-        responseHandler(res, null, 400)
-    })
-    responseHandler(res, null, 201);
+    try {
+        const { body } = req;
+        await UserService.createUser(body);
+        responseHandler(res, null, 201);
+    } catch (err) {
+        console.error(err.message);
+        responseHandler(res, null, 400);
+    }
 }
 
 /**
@@ -20,9 +23,13 @@ export const createUser = async (req, res) => {
  * @param {Object} res 
  */
 export const getUserInfo = async (req, res) => {
-    const { params: { userId } } = req;
-    const user = await UserService.getUserInfo(userId);
-    responseHandler(res, user);
+    try {
+        const { params: { userId } } = req;
+        const user = await UserService.getUserInfo(userId);
+        responseHandler(res, user);
+    } catch (err) {
+        responseHandler(res, null, 400);
+    }
 }
 
 export const updateUser = async (req, res) => {
