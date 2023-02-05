@@ -1,7 +1,6 @@
 import { executeQuery } from '../../db/sql/executor.js';
 import { createHash, checkHash } from '../utils/hashUtil.js';
 import _ from 'lodash';
-import { validateEmail } from '../utils/stringUtils.js';
 
 const checkForExistingUser = async (username) => {
     const query = `SELECT * FROM users WHERE username="${username}"`;
@@ -10,29 +9,12 @@ const checkForExistingUser = async (username) => {
 }
 
 /**
- * Validate request data
- * @param {Object} payload 
- * @returns {Object}
- */
-const validateRequestData = (payload, validList) => {
-    const validKeys = _.pick(payload, validList);
-    _.forEach(validKeys, (value, key) => {
-        if (typeof value !== 'string') throw new Error('Malformed data');
-        if (key === 'username') {
-            if (!validateEmail(value)) throw new Error('Username malformed');
-        }
-    })
-    return validKeys;
-}
-
-/**
  * Create new user
  * @param {Object} userPayload 
  * @returns 
  */
 const createUser = async (userPayload) => {
-    const validList = ['first_name', 'last_name', 'password', 'username'];
-    const { first_name, last_name, username, password } = validateRequestData(userPayload, validList);
+    const { first_name, last_name, username, password } = userPayload;
     const existingUser = await checkForExistingUser(username);
     if (existingUser.length > 0) throw new Error('User already exists');
     const hashedPass = await createHash(password);
@@ -43,6 +25,11 @@ const createUser = async (userPayload) => {
     return user[0];
 }
 
+/**
+ * Get user info by id
+ * @param {String} id 
+ * @returns {Object}
+ */
 const getUserInfo = async (id) => {
     const columns = `id, first_name, last_name, username, account_created, account_updated`;
     const query = `SELECT ${columns} FROM users WHERE id=${id}`;
@@ -50,6 +37,13 @@ const getUserInfo = async (id) => {
     return user[0];
 }
 
+/**
+ * Check if password matches
+ * @param {String} username 
+ * @param {String} password 
+ * @param {String} id 
+ * @returns {Boolean}
+ */
 const checkPassword = async (username, password, id) => {
     const query = `SELECT * FROM users WHERE username="${username}" AND id=${id}`;
     const user = await executeQuery(query);
@@ -57,17 +51,24 @@ const checkPassword = async (username, password, id) => {
     return checkHash(password, _.get(user[0], 'password'));
 }
 
+/**
+ * Update user info
+ * @param {String} id 
+ * @param {Object} payload 
+ * @returns 
+ */
 const updateUser = async (id, payload) => {
+    const updateObject = _.cloneDeep(payload);
     let setQuery = 'SET';
-    const validList = ['first_name', 'last_name', 'password'];
-    const validUpdateKeys = validateRequestData(payload, validList);
+    // Update pass
+    if (_.get(updateObject, 'password')) {
+        setQuery += ` password="${await createHash(updateObject.password)}",`;
+        delete updateObject.password; // Should not be added in the query again
+    }
     // Set query builder
-    _.forEach(validUpdateKeys, async (value, key) => {
+    _.forEach(updateObject, async (value, key) => {
         if (_.isEmpty(value)) return;
-        if (key === 'password') {
-            const pass = await createHash(value);
-            setQuery += ` ${key}="${pass}",`;
-        } else setQuery += ` ${key}="${value}",`;
+        setQuery += ` ${key}="${value}",`;
     });
 
     // slice to remove comma at the end
