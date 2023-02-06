@@ -8,7 +8,7 @@
  */
 const centralErrorHandler = (error, res) => {
   // Log to file
-  console.error('ErrorHandler: ', error);
+  console.error('CentralErrorHandler: ', error);
   res.sendStatus(500);
 };
 

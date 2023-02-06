@@ -8,14 +8,11 @@ import catchAsync from '../utils/catchAsync.js';
  * @param {Object} res
  */
 export const createUser = catchAsync(async (req, res) => {
-  try {
-    const { body } = req;
-    const user = await UserService.createUser(body);
-    responseHandler(res, user, 201);
-  } catch (err) {
-    console.error(err.message);
-    responseHandler(res, null, 400);
-  }
+  const { body } = req;
+  const user = await UserService.createUser(body);
+  responseHandler(res, user, 201);
+  console.error(err.message);
+  responseHandler(res, null, 400);
 });
 
 /**
@@ -24,13 +21,9 @@ export const createUser = catchAsync(async (req, res) => {
  * @param {Object} res
  */
 export const getUserInfo = catchAsync(async (req, res) => {
-  try {
-    const { params: { userId } } = req;
-    const user = await UserService.getUserInfo(userId);
-    responseHandler(res, user);
-  } catch (err) {
-    responseHandler(res, null, 400);
-  }
+  const { params: { userId } } = req;
+  const user = await UserService.getUserInfo(userId);
+  responseHandler(res, user);
 });
 
 export const updateUser = catchAsync(async (req, res) => {

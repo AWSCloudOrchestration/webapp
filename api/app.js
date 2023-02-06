@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import routes from './routes/index.js';
 import morgan from 'morgan';
+import centralErrorHandler from './utils/centralErrorHandler.js';
 import errorHandlerMiddleware from './middlewares/error.middleware.js';
 
 const app = express();
