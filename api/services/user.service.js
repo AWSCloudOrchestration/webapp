@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db/sql/executor.js';
 import { createHash, checkHash } from '../utils/hashUtil.js';
 import _ from 'lodash';
+import AppError from '../utils/AppError.js';
 
 const checkForExistingUser = async (username) => {
   const query = `SELECT * FROM users WHERE username="${username}"`;
@@ -16,7 +17,7 @@ const checkForExistingUser = async (username) => {
 const createUser = async (userPayload) => {
   const { first_name, last_name, username, password } = userPayload;
   const existingUser = await checkForExistingUser(username);
-  if (existingUser.length > 0) throw new Error('User already exists');
+  if (existingUser.length > 0) throw new AppError('User already exists', 400);
   const hashedPass = await createHash(password);
   const query = `INSERT INTO users (first_name, last_name, username, password) VALUES ("${first_name}", "${last_name}", "${username}", "${hashedPass}")`;
   // Create new user
