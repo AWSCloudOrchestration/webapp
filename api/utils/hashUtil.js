@@ -17,6 +17,7 @@ const createHash = async (plaintext) => {
  * @returns {Boolean}
  */
 const checkHash = async (userSentPass, password) => {
+  if (!password) return false;
   const match = await bcrypt.compare(userSentPass, password);
   if (match) return true;
   return false;

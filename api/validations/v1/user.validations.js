@@ -6,6 +6,15 @@ const getUserById = {
   }),
 };
 
+const create = {
+  body: Joi.object().keys({
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    password: Joi.string().required(),
+    username: Joi.string().required(),
+  }),
+};
+
 const update = {
   params: Joi.object().keys({
     userId: Joi.string().required(),
@@ -20,4 +29,5 @@ const update = {
 export {
   getUserById,
   update,
+  create,
 };
