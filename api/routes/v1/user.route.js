@@ -2,13 +2,13 @@ import express from 'express';
 import { createUser, getUserInfo, updateUser } from '../../controllers/user.controller.js';
 import authMiddleware from '../../middlewares/auth.middleware.js';
 import requestValidationMiddleware from '../../middlewares/validation.middleware.js';
-import { getUserById, update } from '../../validations/v1/user.validations.js';
+import { getUserById, update, create } from '../../validations/v1/user.validations.js';
 
 const router = express.Router();
 
 router
     .route('/')
-    .post(createUser);
+    .post(requestValidationMiddleware(create), createUser);
 
 router
     .route('/:userId')

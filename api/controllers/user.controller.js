@@ -11,8 +11,6 @@ export const createUser = catchAsync(async (req, res) => {
   const { body } = req;
   const user = await UserService.createUser(body);
   responseHandler(res, user, 201);
-  console.error(err.message);
-  responseHandler(res, null, 400);
 });
 
 /**
