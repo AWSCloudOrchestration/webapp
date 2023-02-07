@@ -19,13 +19,13 @@ export const createUser = catchAsync(async (req, res) => {
  * @param {Object} res
  */
 export const getUserInfo = catchAsync(async (req, res) => {
-  const { params: { userId } } = req;
-  const user = await UserService.getUserInfo(userId);
-  responseHandler(res, user);
+  const { params: { userId }, user } = req;
+  const userInfo = await UserService.getUserInfo(userId, user);
+  responseHandler(res, userInfo);
 });
 
 export const updateUser = catchAsync(async (req, res) => {
-  const { params: { userId }, body } = req;
-  await UserService.updateUser(userId, body);
+  const { params: { userId }, body, user } = req;
+  await UserService.updateUser(userId, body, user);
   responseHandler(res, null, 204);
 });

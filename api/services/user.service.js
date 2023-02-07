@@ -28,12 +28,15 @@ const createUser = async (userPayload) => {
 /**
  * Get user info by id
  * @param {String} id
+ * @param {Object} user Requesting user
  * @returns {Object}
  */
-const getUserInfo = async (id) => {
+const getUserInfo = async (id, user) => {
+  // Authorised user can only get own user info
+  if (+(_.get(user, 'id')) !== +id) throw new AppError('Forbidden resource', 403);
   const UserModel = getModelInstance('users');
-  const user = await UserModel.findAll({ where: { id } });
-  return _.get(user[0], 'dataValues');
+  const userInfo = await UserModel.findOne({ where: { id } });
+  return _.get(userInfo, 'dataValues');
 };
 
 
@@ -43,13 +46,15 @@ const getUserInfo = async (id) => {
  * @param {Object} payload
  * @returns
  */
-const updateUser = async (id, payload) => {
+const updateUser = async (id, payload, user) => {
+  // Authorised user can only get own user info
+  if (+(_.get(user, 'id')) !== +id) throw new AppError('Forbidden resource', 403);
   const UserModel = getModelInstance('users');
   const updateObject = _.cloneDeep(payload);
   // Update pass
   updateObject.password = await createHash(updateObject.password);
   const { first_name, last_name, password } = updateObject;
-  return UserModel.update({ first_name, last_name, password }, { where: { id } });
+  await UserModel.update({ first_name, last_name, password }, { where: { id } });
 };
 
 export default {
