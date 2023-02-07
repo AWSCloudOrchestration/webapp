@@ -1,0 +1,2 @@
+npx sequelize-cli model:generate --name users --attributes id:integer,first_name:string,last_name:string,username:string,password:string,account_created:date,account_updated:date
+npx sequelize-cli model:generate --name products --attributes id:integer,name:string,description:string,sku:string,manufacturer:string,quantity:integer,date_added:date,date_last_updated:date,owner_user_id:integer
