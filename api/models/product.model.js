@@ -19,6 +19,7 @@ export const productModel = (sequelize) => {
     sku: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     manufacturer: {
       type: DataTypes.STRING,
@@ -28,19 +29,22 @@ export const productModel = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    date_added: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    date_last_updated: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     owner_user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'users',
+      },
+      date_added: {
+        type: sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      date_last_updated: {
+        type: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
     },
   }, {
     timestamps: false,

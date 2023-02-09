@@ -9,7 +9,6 @@ const routes = [
   {
     path: '/v1/product',
     route: ProductRoutes,
-
   },
 ];
 

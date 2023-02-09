@@ -21,8 +21,8 @@ export const update = catchAsync(async (req, res) => {
 });
 
 export const deleteProduct = catchAsync(async (req, res) => {
-  const { params: { productId } } = req;
-  await ProductService.deleteProduct(productId);
+  const { params: { productId }, user } = req;
+  await ProductService.deleteProduct(productId, user);
   responseHandler(res, null, 204);
 });
 

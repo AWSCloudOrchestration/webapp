@@ -1,0 +1,4 @@
+npx sequelize-cli db:migrate
+
+npx sequelize-cli migration:generate --name create-product-table
+npx sequelize-cli migration:generate --name create-user-table
