@@ -1,4 +1,4 @@
-# Assignment 1: Web Application Development
+# Assignment 2: Web Application Development
 
 **Name:** Kaushik Gnanasekar \
 **Email:** gnanasekar.ka@northeastern.edu \
@@ -41,6 +41,12 @@ npm test
 ## API Documentation
 ```
 https://app.swaggerhub.com/apis-docs/csye6225-webapp/cloud-native-webapp/spring2023-a1
+https://app.swaggerhub.com/apis-docs/csye6225-webapp/cloud-native-webapp/spring2023-a2#/Product
+```
+
+## Run migrations
+```
+npx sequelize-cli db:migrate
 ```
 
 
