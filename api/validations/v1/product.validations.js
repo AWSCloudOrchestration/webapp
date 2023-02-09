@@ -12,7 +12,7 @@ const createProduct = {
     description: Joi.string().required(),
     sku: Joi.string().required(),
     manufacturer: Joi.string().required(),
-    quantity: Joi.number().required(),
+    quantity: Joi.number().integer().min(0).max(100).required(),
   }),
 };
 
@@ -25,7 +25,7 @@ const updateProduct = {
     description: Joi.string().required(),
     sku: Joi.string().required(),
     manufacturer: Joi.string().required(),
-    quantity: Joi.number().required(),
+    quantity: Joi.number().integer().min(0).max(100).required(),
   }),
 };
 
@@ -38,7 +38,7 @@ const patchProduct = {
     description: Joi.string(),
     sku: Joi.string(),
     manufacturer: Joi.string(),
-    quantity: Joi.number(),
+    quantity: Joi.number().integer().min(0).max(100).required(),
   }),
 };
 
