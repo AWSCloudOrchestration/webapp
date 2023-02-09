@@ -23,16 +23,17 @@ export const userModel = (sequelize) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     account_created: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: sequelize.literal('CURRENT_TIMESTAMP'),
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     account_updated: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
   }, {
     timestamps: false,

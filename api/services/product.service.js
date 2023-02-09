@@ -16,7 +16,6 @@ const createProduct = async (productBody, ownerUserId) => {
     manufacturer: productBody.manufacturer,
     quantity: productBody.quantity,
     owner_user_id: ownerUserId,
-
   });
   return product;
 };
