@@ -28,6 +28,6 @@ export const deleteProduct = catchAsync(async (req, res) => {
 
 export const patch = catchAsync(async (req, res) => {
   const { params: { productId }, body, user } = req;
-  const product = await ProductService.patchProduct(productId, body, user);
-  responseHandler(res, product);
+  await ProductService.patchProduct(productId, body, user);
+  responseHandler(res, null, 204);
 });

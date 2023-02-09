@@ -30,6 +30,7 @@ const createProduct = async (productBody, ownerUserId) => {
 const getProduct = async (id) => {
   const ProductModel = getModelInstance('products');
   const product = await ProductModel.findOne({ where: { id } });
+  if (!product) throw new AppError('Product not found', 404);
   return product;
 };
 
