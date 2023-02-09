@@ -9,6 +9,8 @@ import AppError from '../utils/AppError.js';
  */
 const createProduct = async (productBody, ownerUserId) => {
   const ProductModel = getModelInstance('products');
+  const existingProductSku = await ProductModel.findOne({ where: { sku: productBody.sku } });
+  if (existingProductSku) throw new AppError('sku must be unique', 400);
   const product = await ProductModel.create({
     name: productBody.name,
     description: productBody.description,
@@ -56,7 +58,9 @@ const checkIfUserIsForbidden = async (id, user) => {
 const updateProduct = async (id, productBody, user) => {
   const ProductModel = getModelInstance('products');
   await checkIfUserIsForbidden(id, user);
-  await ProductModel.update({ ...productBody }, { where: { id } });
+  await ProductModel.update({ ...productBody }, { where: { id } }).catch((err) => {
+    if (_.get(err, 'parent.errno') === 1062) throw new AppError('sku must be unique', 400);
+  });
   const product = await ProductModel.findOne({ where: { id } });
   return product;
 };
@@ -87,7 +91,9 @@ const patchProduct = async (id, productBody, user) => {
     if (_.isEmpty(value)) return;
     updateBody[key] = value;
   } );
-  await ProductModel.update(updateBody, { where: { id } });
+  await ProductModel.update(updateBody, { where: { id } }).catch((err) => {
+    if (_.get(err, 'parent.errno') === 1062) throw new AppError('sku must be unique', 400);
+  });
   const product = await ProductModel.findOne({ where: { id } });
   return product;
 };

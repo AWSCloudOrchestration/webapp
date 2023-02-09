@@ -5,7 +5,7 @@ import responseHandler from '../utils/responseHandler.js';
 export const create = catchAsync(async (req, res) => {
   const { body, user: { id } } = req;
   const product = await ProductService.createProduct(body, id);
-  responseHandler(res, product);
+  responseHandler(res, product, 201);
 });
 
 export const get = catchAsync(async (req, res) => {
@@ -16,8 +16,8 @@ export const get = catchAsync(async (req, res) => {
 
 export const update = catchAsync(async (req, res) => {
   const { params: { productId }, body, user } = req;
-  const product = await ProductService.updateProduct(productId, body, user);
-  responseHandler(res, product);
+  await ProductService.updateProduct(productId, body, user);
+  responseHandler(res, null, 204);
 });
 
 export const deleteProduct = catchAsync(async (req, res) => {
