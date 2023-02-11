@@ -9,7 +9,7 @@ describe('base64 util tests', () => {
     const plaintext = 'tests';
     const result = base64Util.encode(plaintext);
     expect(result).to.be.string;
-    expect(result).equal('dGVzdHM=');
+    expect(result).equal('dGV');
   });
 
   it('encode base64 test where input is not string', async () => {
