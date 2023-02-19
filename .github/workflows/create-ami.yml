@@ -14,11 +14,12 @@ jobs:
         run:  touch webapp.tar.gz && tar --exclude=webapp.tar.gz --exclude='.git' --exclude='.github' --exclude='.vscode' --exclude='node_modules' --exclude="package-lock.json" --exclude=".env" -zcvf webapp.tar.gz .
       
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -34,7 +35,10 @@ jobs:
         id: validate
         run: "packer validate ./aws-basic.pkr.hcl"
       
-      - name: Build `packer validate`
-        id: build
-        run: "packer build ./aws-basic.pkr.hcl"
+      - name: Build AMI
+        run: |
+          packer build \
+          -var "aws_access_key=$AWS_ACCESS_KEY_ID" \
+          -var "aws_secret_key=$AWS_SECRET_ACCESS_KEY" \
+          aws-basic.pkr.hcl
       
