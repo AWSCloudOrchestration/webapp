@@ -10,11 +10,13 @@ jobs:
 
       - name: Print
         run: |
+          echo $TEST_KEY
           echo $AWS_ACCESS_KEY_ID
           echo $AWS_SECRET_ACCESS_KEY
         env:
          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID  }}
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         TEST_KEY: ${{ secrets.TEST_KEY }}
     
       - name: Checkout code
         uses: actions/checkout@v2
