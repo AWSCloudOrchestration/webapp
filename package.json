@@ -7,7 +7,9 @@
   "scripts": {
     "test": "mocha 'test/**/*.js'",
     "start": "node index.js",
-    "lintfix": "eslint . --fix"
+    "lintfix": "eslint . --fix",
+    "migratedb": "npx sequelize-cli db:migrate",
+    "migrateundo": "npx sequelize-cli db:migrate:undo"
   },
   "repository": {
     "type": "git",
