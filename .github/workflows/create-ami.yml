@@ -13,6 +13,11 @@ jobs:
       - name: Compress files
         run:  touch webapp.tar.gz && tar --exclude=webapp.tar.gz --exclude='.git' --exclude='.github' --exclude='.vscode' --exclude='node_modules' --exclude="package-lock.json" --exclude=".env" -zcvf webapp.tar.gz .
       
+      - name: Print
+        run: |
+          echo ${{ secrets.AWS_ACCESS_KEY_ID  }}
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
