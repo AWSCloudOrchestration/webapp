@@ -26,13 +26,13 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "mysql2": "^3.1.0",
-    "sequelize": "^6.28.0"
+    "sequelize": "^6.28.0",
+    "sequelize-cli": "^6.6.0"
   },
   "devDependencies": {
     "chai": "^4.3.7",
     "eslint": "^8.33.0",
     "eslint-config-google": "^0.14.0",
-    "mocha": "^10.2.0",
-    "sequelize-cli": "^6.6.0"
+    "mocha": "^10.2.0"
   }
 }
