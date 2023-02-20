@@ -60,7 +60,7 @@ nvm use 16.19.1
 mkdir /home/ec2-user/webapp
 tar -xf /home/ec2-user/webapp.tar.gz -C /home/ec2-user/webapp
 # npm install
-npm install --production --prefix /home/ec2-user/webapp
+npm install --omit=dev --prefix /home/ec2-user/webapp
 
 # Create systemd service
 sudo touch /etc/systemd/system/webapp.service
