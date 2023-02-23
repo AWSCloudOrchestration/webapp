@@ -65,3 +65,28 @@ variable "aws_ami_users" {
   type = list(string)
 }
 
+variable "app_file_source" {
+  type    = string
+  default = "../webapp.tar.gz"
+}
+
+variable "app_file_destination" {
+  type    = string
+  default = "/home/ec2-user/webapp.tar.gz"
+}
+
+variable "app_setup_script_file" {
+  type    = string
+  default = "../scripts/setup-node-env.sh"
+}
+
+variable "shell_pause_before" {
+  type    = string
+  default = "10s"
+}
+
+variable "shell_timeout" {
+  type    = string
+  default = "10s"
+}
+
