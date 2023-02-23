@@ -62,9 +62,6 @@ tar -xf /home/ec2-user/webapp.tar.gz -C /home/ec2-user/webapp
 # npm install
 npm install --omit=dev --prefix /home/ec2-user/webapp
 
-# Create systemd service
-sudo touch /etc/systemd/system/webapp.service
-
 # Set env
 printf "\nexport NODE_ENV=production\nexport PROD_APP_PORT=3001\nexport PROD_SQL_HOST=localhost\nexport PROD_SQL_USER=webapp\nexport PROD_SQL_PASS=MyNewPass4!\nexport PROD_SQL_DB=webapp\nexport PROD_DB_DIALECT=mysql" >> ~/.bashrc
 source ~/.bashrc
@@ -72,13 +69,16 @@ source ~/.bashrc
 # Run migration scripts
 npm run migratedb --prefix /home/ec2-user/webapp
 
+# Create systemd service
+sudo touch /etc/systemd/system/webapp.service
+
 # Add script
 sudo bash -c "cat > /etc/systemd/system/webapp.service <<EOF
 [Unit]
 Description=webapp
 
 [Service]
-# Start Service and Examples
+ExecStartPre=/bin/sleep 30
 ExecStart=/home/ec2-user/.nvm/versions/node/v16.19.1/bin/node /home/ec2-user/webapp/index.js
 # Restart service after 10 seconds if node service crashes
 RestartSec=10
@@ -107,6 +107,7 @@ EOF"
 sudo systemctl daemon-reload
 sudo systemctl enable webapp.service
 sudo systemctl start webapp.service
+sudo systemctl restart webapp.service
 
 
 

@@ -1,0 +1,25 @@
+name: Validate custom AMI template
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: "latest"
+
+      - name: Initialize packer
+        id: init
+        run: "packer init ./ec2-ami-build.pkr.hcl"
+
+      - name: Validate packer template
+        id: validate
+        run: "packer validate -var-file='variables.pkrvars.hcl' ."

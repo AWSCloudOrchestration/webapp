@@ -2,7 +2,7 @@
 Description=webapp
 
 [Service]
-# Start Service and Examples
+ExecStartPre=/bin/sleep 30
 ExecStart=/home/ec2-user/.nvm/versions/node/v16.19.1/bin/node /home/ec2-user/webapp/index.js
 # Restart service after 10 seconds if node service crashes
 RestartSec=10
@@ -12,19 +12,16 @@ Restart=on-failure
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=webapp-server
-# #### please, not root users
-# RHEL/Fedora uses 'nobody'
-# User=ec2-user
+User=ec2-user
 
 # variables
-Environment=PATH=/usr/bin:/usr/local/bin
+Environment=PROD_SQL_USER=webapp
 Environment=NODE_ENV=production
 Environment=APP_PORT=3001
-Environment=SQL_HOST=localhost
-Environment=SQL_USER=mysql
-Environment=SQL_PASS=password
-Environment=SQL_DB=webapp
-Environment=DB_DIALECT=mysql
+Environment=PROD_SQL_HOST=localhost
+Environment=PROD_SQL_PASS=MyNewPass4!
+Environment=PROD_SQL_DB=webapp
+Environment=PROD_DB_DIALECT=mysql
 
 [Install]
 WantedBy=multi-user.target
