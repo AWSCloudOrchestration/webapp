@@ -37,13 +37,13 @@ build {
   ]
 
   provisioner "file" {
-    source      = "../webapp.tar.gz"
-    destination = "/home/ec2-user/webapp.tar.gz"
+    source      = var.app_file_source
+    destination = var.app_file_destination
   }
 
   provisioner "shell" {
-    script       = "../scripts/setup-node-env.sh"
-    pause_before = "10s"
-    timeout      = "10s"
+    script       = var.app_setup_script_file
+    pause_before = var.shell_pause_before
+    timeout      = var.shell_timeout
   }
 }
