@@ -16,6 +16,9 @@ jobs:
         with:
           version: "latest"
 
+      - name: Touch webapp package
+        run: touch webapp.tar.gz
+
       - name: Initialize packer
         id: init
         run: "packer init ./ec2-ami-build.pkr.hcl"
