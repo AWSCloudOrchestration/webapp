@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    name: Build custom AMI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
