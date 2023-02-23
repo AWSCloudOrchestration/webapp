@@ -1,7 +1,7 @@
 name: Build custom AMI
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -9,9 +9,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Compress codebase
-        run:  touch webapp.tar.gz && tar --exclude=webapp.tar.gz --exclude='.git' --exclude='.github' --exclude='.vscode' --exclude='node_modules' --exclude="package-lock.json" --exclude=".env" -zcvf webapp.tar.gz .
+        run: touch webapp.tar.gz && tar --exclude=webapp.tar.gz --exclude='.git' --exclude='.github' --exclude='.vscode' --exclude='node_modules' --exclude="package-lock.json" --exclude=".env" -zcvf webapp.tar.gz .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -29,12 +29,14 @@ jobs:
       - name: Initialize packer
         id: init
         run: "packer init ./ec2-ami-build.pkr.hcl"
+        working-directory: ./packer
 
       - name: Validate packer template
         id: validate
         run: "packer validate -var-file='variables.pkrvars.hcl' ."
-      
+        working-directory: ./packer
+
       - name: Build artifacts
         id: build
         run: "packer build -var-file='variables.pkrvars.hcl' ."
-      
+        working-directory: ./packer
