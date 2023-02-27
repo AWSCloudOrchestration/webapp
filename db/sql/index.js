@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import { userModel } from '../../api/models/user.model.js';
 import { productModel } from '../../api/models/product.model.js';
+import { imageModel } from '../../api/models/image.model.js';
 
 let connection;
 
@@ -25,6 +26,7 @@ const createConnection = async () => {
 const loadModels = async () => {
   connection.users = userModel(connection);
   connection.products = productModel(connection);
+  connection.images = imageModel(connection);
 };
 
 /**
