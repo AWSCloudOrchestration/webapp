@@ -138,6 +138,13 @@ const getAllProductImages = async (productId, user) => {
   return image;
 };
 
+const getProductImageById = async (productId, imageId, user) => {
+  await checkIfUserIsForbidden(productId, user);
+  const ImageModel = getModelInstance('images');
+  const image = await ImageModel.findOne({ where: { image_id: imageId } });
+  return image;
+};
+
 export default {
   createProduct,
   getProduct,
@@ -146,4 +153,5 @@ export default {
   patchProduct,
   addProductImage,
   getAllProductImages,
+  getProductImageById,
 };

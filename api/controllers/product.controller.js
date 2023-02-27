@@ -43,3 +43,9 @@ export const getAllProductImages = catchAsync(async (req, res) => {
   const images = await ProductService.getAllProductImages(productId, user);
   responseHandler(res, images);
 });
+
+export const getProductImageById = catchAsync(async (req, res) => {
+  const { params: { productId, imageId }, user } = req;
+  const image = await ProductService.getProductImageById(productId, imageId, user);
+  responseHandler(res, image);
+});
