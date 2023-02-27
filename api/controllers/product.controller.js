@@ -31,3 +31,15 @@ export const patch = catchAsync(async (req, res) => {
   await ProductService.patchProduct(productId, body, user);
   responseHandler(res, null, 204);
 });
+
+export const uploadProductImage = catchAsync(async (req, res) => {
+  const { file, params: { productId }, user } = req;
+  await ProductService.addProductImage(file, productId, user);
+  responseHandler(res, 'File Uploaded', 201);
+});
+
+export const getAllProductImages = catchAsync(async (req, res) => {
+  const { user, params: { productId } } = req;
+  const images = await ProductService.getAllProductImages(productId, user);
+  responseHandler(res, images);
+});

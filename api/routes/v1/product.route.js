@@ -1,7 +1,10 @@
 import express from 'express';
-import { get, create, update, deleteProduct, patch } from '../../controllers/product.controller.js';
+import { get, create, update, deleteProduct, patch, uploadProductImage, getAllProductImages } from '../../controllers/product.controller.js';
 import authMiddleware from '../../middlewares/auth.middleware.js';
 import requestValidationMiddleware from '../../middlewares/validation.middleware.js';
+import multer from 'multer';
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 import { getProductById,
   updateProduct,
   createProduct,
@@ -18,5 +21,9 @@ router.route('/:productId')
     .put(authMiddleware(), requestValidationMiddleware(updateProduct), update)
     .delete(authMiddleware(), requestValidationMiddleware(deleteByProductId), deleteProduct)
     .patch(authMiddleware(), requestValidationMiddleware(patchProduct), patch);
+
+router.route('/:productId/image')
+    .post(authMiddleware(), upload.single('file'), uploadProductImage)
+    .get(authMiddleware(), getAllProductImages);
 
 export default router;

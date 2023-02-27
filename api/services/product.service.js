@@ -1,6 +1,9 @@
 import getModelInstance from '../../db/sql/getModelInstance.js';
 import _ from 'lodash';
 import AppError from '../utils/AppError.js';
+import s3Client from '../../s3/index.js';
+import { v4 as uuidv4 } from 'uuid';
+
 
 /**
  * Create product
@@ -99,10 +102,48 @@ const patchProduct = async (id, productBody, user) => {
   return product;
 };
 
+/**
+ * Add image for product
+ * @param {Object} file
+ * @param {String} productId
+ * @returns
+ */
+const addProductImage = async (file, productId, user) => {
+  await checkIfUserIsForbidden(productId, user);
+  const ImageModel = getModelInstance('images');
+  const key = uuidv4();
+  const bucket = process.env.AWS_S3_BUCKET_NAME;
+  // Upload to S3
+  const { Location } = await s3Client.uploadFile(key, bucket, file);
+  const { mimetype } = file;
+  const fileFormat = mimetype.split('/')[1];
+  const image = await ImageModel.create({
+    file_name: `${key}.${fileFormat}`,
+    s3_bucket_path: Location,
+    product_id: productId,
+  });
+  return image;
+};
+
+/**
+ * Get all images for product
+ * @param {String} productId
+ * @param {String} ownerUserId
+ * @returns
+ */
+const getAllProductImages = async (productId, user) => {
+  await checkIfUserIsForbidden(productId, user);
+  const ImageModel = getModelInstance('images');
+  const image = await ImageModel.findAll({ where: { product_id: productId } });
+  return image;
+};
+
 export default {
   createProduct,
   getProduct,
   updateProduct,
   deleteProduct,
   patchProduct,
+  addProductImage,
+  getAllProductImages,
 };
