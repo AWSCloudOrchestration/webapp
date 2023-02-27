@@ -7,8 +7,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "aws-ami" {
-  region        = var.aws_region
+source "amazon-ebs123" "aws-ami" {
+region        = var.aws_region
   source_ami    = var.aws_source_ami
   instance_type = var.aws_instance_type
   ssh_username  = var.aws_ssh_username
@@ -27,7 +27,7 @@ source "amazon-ebs" "aws-ami" {
     device_name           = var.ebs_device_name
     volume_size           = var.ebs_volume_size
     volume_type           = var.ebs_volume_type
-  }
+ 
 }
 
 build {
