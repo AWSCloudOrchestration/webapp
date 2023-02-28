@@ -49,3 +49,9 @@ export const getProductImageById = catchAsync(async (req, res) => {
   const image = await ProductService.getProductImageById(productId, imageId, user);
   responseHandler(res, image);
 });
+
+export const deleteProductImage = catchAsync(async (req, res) => {
+  const { params: { productId, imageId }, user } = req;
+  await ProductService.deleteProductImage(productId, imageId, user);
+  responseHandler(res, null, 204);
+});

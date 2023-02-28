@@ -1,6 +1,7 @@
 import express from 'express';
 import { get, create, update, deleteProduct, patch,
   uploadProductImage, getAllProductImages, getProductImageById,
+  deleteProductImage,
 } from '../../controllers/product.controller.js';
 import authMiddleware from '../../middlewares/auth.middleware.js';
 import requestValidationMiddleware from '../../middlewares/validation.middleware.js';
@@ -29,6 +30,7 @@ router.route('/:productId/image')
     .get(authMiddleware(), getAllProductImages);
 
 router.route('/:productId/image/:imageId')
-    .get(authMiddleware(), getProductImageById);
+    .get(authMiddleware(), getProductImageById)
+    .delete(authMiddleware(), deleteProductImage);
 
 export default router;
