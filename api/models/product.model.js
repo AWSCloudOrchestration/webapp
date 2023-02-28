@@ -36,18 +36,10 @@ export const productModel = (sequelize) => {
         model: 'users',
       },
     },
-    date_added: {
-      type: sequelize.literal('CURRENT_TIMESTAMP'),
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    date_last_updated: {
-      type: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   }, {
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'date_added',
+    updatedAt: 'date_last_updated',
   });
   return ProductModel;
 };

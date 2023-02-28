@@ -37,6 +37,7 @@ const initConnection = async () => {
     connection = await createConnection();
     await loadModels();
     await connection.authenticate();
+    await connection.sync();
     console.log('MySQL connected.');
   } catch (err) {
     console.error('MySQL connect failed: ', err);

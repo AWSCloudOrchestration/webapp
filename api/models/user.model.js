@@ -25,18 +25,10 @@ export const userModel = (sequelize) => {
       allowNull: false,
       unique: true,
     },
-    account_created: {
-      type: sequelize.literal('CURRENT_TIMESTAMP'),
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    account_updated: {
-      type: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   }, {
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'account_created',
+    updatedAt: 'account_updated',
   });
   return UserModel;
 };
