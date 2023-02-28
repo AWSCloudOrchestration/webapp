@@ -70,13 +70,30 @@ const updateProduct = async (id, productBody, user) => {
 };
 
 /**
- *
+ * Delete all objects from s3 for the product
+ * @param {Object} images
+ */
+const deleteAllAssociatedS3Objects = async (images) => {
+  const bucket = process.env.AWS_S3_BUCKET_NAME;
+  const keys = _.map(images, (image) => {
+    return { 'Key': image.s3_bucket_path };
+  });
+  await s3Client.deleteObjects(keys, bucket);
+};
+
+/**
+ * Delete product
  * @param {String} id
  * @param {Object} user
  */
 const deleteProduct = async (id, user) => {
   const ProductModel = getModelInstance('products');
+  const ImageModel = getModelInstance('images');
   await checkIfUserIsForbidden(id, user);
+  const images = await ImageModel.findAll({ where: { product_id: id } });
+  // Delete all images associated with the product
+  await deleteAllAssociatedS3Objects(images);
+  await ImageModel.destroy({ where: { product_id: id } });
   await ProductModel.destroy({ where: { id } });
 };
 
@@ -138,6 +155,13 @@ const getAllProductImages = async (productId, user) => {
   return image;
 };
 
+/**
+ * Get product image by id
+ * @param {String} productId
+ * @param {String} imageId
+ * @param {Object} user
+ * @returns {Object}
+ */
 const getProductImageById = async (productId, imageId, user) => {
   await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
@@ -145,6 +169,12 @@ const getProductImageById = async (productId, imageId, user) => {
   return image;
 };
 
+/**
+ * Delete product image
+ * @param {String} productId
+ * @param {String} imageId
+ * @param {Object} user
+ */
 const deleteProductImage = async (productId, imageId, user) => {
   await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
