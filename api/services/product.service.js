@@ -109,17 +109,17 @@ const patchProduct = async (id, productBody, user) => {
  * @returns
  */
 const addProductImage = async (file, productId, user) => {
+  if (_.isEmpty(file)) throw new AppError('No file data provided', 400);
   await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
-  const key = uuidv4();
+  const uniqKey = uuidv4();
+  const key = `${uniqKey}/${file.originalname}`;
   const bucket = process.env.AWS_S3_BUCKET_NAME;
   // Upload to S3
-  const { Location } = await s3Client.uploadFile(key, bucket, file);
-  const { mimetype } = file;
-  const fileFormat = mimetype.split('/')[1];
+  await s3Client.uploadFile(key, bucket, file);
   const image = await ImageModel.create({
-    file_name: `${key}.${fileFormat}`,
-    s3_bucket_path: Location,
+    file_name: file.originalname,
+    s3_bucket_path: key,
     product_id: productId,
   });
   return image;
@@ -145,6 +145,16 @@ const getProductImageById = async (productId, imageId, user) => {
   return image;
 };
 
+const deleteProductImage = async (productId, imageId, user) => {
+  await checkIfUserIsForbidden(productId, user);
+  const ImageModel = getModelInstance('images');
+  const image = await ImageModel.findOne({ where: { image_id: imageId } });
+  if (!image) throw new AppError('Image not found', 404);
+  await ImageModel.destroy({ where: { image_id: imageId } });
+  const bucket = process.env.AWS_S3_BUCKET_NAME;
+  await s3Client.deleteObject(_.get(image, 's3_bucket_path'), bucket);
+};
+
 export default {
   createProduct,
   getProduct,
@@ -154,4 +164,5 @@ export default {
   addProductImage,
   getAllProductImages,
   getProductImageById,
+  deleteProductImage,
 };

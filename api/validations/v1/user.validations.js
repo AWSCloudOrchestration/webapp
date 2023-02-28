@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 const getUserById = {
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    userId: Joi.number().integer().required(),
   }),
 };
 
@@ -17,7 +17,7 @@ const create = {
 
 const update = {
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    userId: Joi.number().integer().required(),
   }),
   body: Joi.object().keys({
     first_name: Joi.string(),
