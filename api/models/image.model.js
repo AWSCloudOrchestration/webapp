@@ -16,11 +16,6 @@ export const imageModel = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    'date_created': {
-      type: sequelize.literal('CURRENT_TIMESTAMP'),
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
     'product_id': {
       type: DataTypes.INTEGER,
       references: {
@@ -28,7 +23,9 @@ export const imageModel = (sequelize) => {
       },
     },
   }, {
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
+    createdAt: 'date_created',
   });
   return ImageModel;
 };
