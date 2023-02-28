@@ -6,6 +6,7 @@ import {
   UploadPartCommand,
   DeleteObjectCommand,
   PutObjectCommand,
+  DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 
 /**
@@ -18,13 +19,14 @@ import {
  */
 const collectFileParts = (file, Bucket, Key, UploadId) => {
   const chunkSize = 1 * 1024 * 1024; // 1MB
-  const totalParts = Math.ceil(file.buffer.length / chunkSize);
+  const { buffer } = file;
+  const totalParts = Math.ceil(buffer.length / chunkSize);
   const fileParts = [];
   for (let i = 0; i < totalParts; i++) {
     const start = i * chunkSize;
-    const end = Math.min(start + chunkSize, file.buffer.length);
+    const end = Math.min(start + chunkSize, buffer.length);
     const partParams = {
-      Body: file.buffer.slice(start, end),
+      Body: buffer.slice(start, end),
       Bucket,
       Key,
       PartNumber: i + 1,
@@ -82,9 +84,9 @@ const multipartUpload = async (Key, Bucket, file) => {
  * @returns {Object}
  */
 const putObject = (Key, Bucket, file) => {
-  const { mimetype } = file;
+  const { mimetype, buffer } = file;
   const client = s3Client.initClient();
-  const command = new PutObjectCommand({ Key, Bucket, Body: file.buffer, ContentType: mimetype });
+  const command = new PutObjectCommand({ Key, Bucket, Body: buffer, ContentType: mimetype });
   return client.send(command);
 };
 
@@ -100,9 +102,27 @@ const deleteObject = async (Key, Bucket) => {
   return client.send(command);
 };
 
+/**
+ * Delete multiple objects
+ * @param {Object} Objects
+ * @param {String} Bucket
+ * @returns {Object}
+ */
+const deleteObjects = async (Objects, Bucket) => {
+  const client = s3Client.initClient();
+  const params = {
+    Bucket,
+    Delete: {
+      Objects,
+    },
+  };
+  return client.send(new DeleteObjectsCommand(params));
+};
+
 export {
   multipartUpload,
   putObject,
   deleteObject,
+  deleteObjects,
 };
 
