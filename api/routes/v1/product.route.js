@@ -10,7 +10,12 @@ import { getProductById,
   updateProduct,
   createProduct,
   patchProduct,
-  deleteByProductId } from '../../validations/v1/product.validations.js';
+  deleteByProductId,
+  uploadImage,
+  getAllImages,
+  getImage,
+  deleteImage,
+} from '../../validations/v1/product.validations.js';
 // Multer
 const upload = multer({ dest: '/tmp/uploads' });
 
@@ -26,11 +31,11 @@ router.route('/:productId')
     .patch(authMiddleware(), requestValidationMiddleware(patchProduct), patch);
 
 router.route('/:productId/image')
-    .post(authMiddleware(), upload.single('file'), uploadProductImage)
-    .get(authMiddleware(), getAllProductImages);
+    .post(authMiddleware(), requestValidationMiddleware(uploadImage), upload.single('file'), uploadProductImage)
+    .get(authMiddleware(), requestValidationMiddleware(getAllImages), getAllProductImages);
 
 router.route('/:productId/image/:imageId')
-    .get(authMiddleware(), getProductImageById)
-    .delete(authMiddleware(), deleteProductImage);
+    .get(authMiddleware(), requestValidationMiddleware(getImage), getProductImageById)
+    .delete(authMiddleware(), requestValidationMiddleware(deleteImage), deleteProductImage);
 
 export default router;
