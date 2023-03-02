@@ -1,0 +1,1 @@
+tar --exclude='.git' --exclude='.github' --exclude='.vscode' --exclude='node_modules' --exclude="package-lock.json" --exclude=".env" -zcvf ../webapp.tar.gz ../

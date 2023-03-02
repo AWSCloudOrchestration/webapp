@@ -5,7 +5,7 @@ import AppError from '../api/utils/AppError.js';
 import { multipartUpload, putObject, deleteObject, deleteObjects } from './commands.js';
 
 const initClient = () => {
-  return new S3Client({ region: process.env.S3_REGION, maxRetries: 15, profile: 's3' });
+  return new S3Client({ region: process.env.S3_REGION, maxRetries: 15 });
 };
 
 /**
