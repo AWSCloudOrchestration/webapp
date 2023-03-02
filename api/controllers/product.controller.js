@@ -34,8 +34,8 @@ export const patch = catchAsync(async (req, res) => {
 
 export const uploadProductImage = catchAsync(async (req, res) => {
   const { file, params: { productId }, user } = req;
-  await ProductService.addProductImage(file, productId, user);
-  responseHandler(res, 'File Uploaded', 201);
+  const image = await ProductService.addProductImage(file, productId, user);
+  responseHandler(res, image, 201);
 });
 
 export const getAllProductImages = catchAsync(async (req, res) => {
