@@ -50,5 +50,5 @@ jobs:
 
       - name: Build artifacts
         id: build
-        run: "packer build -var-file='variables.pkrvars.hcl' ."
+        run: "packer build -var-file='variables.pkrvars.hcl' -var 'aws_ami_users=[${{ secrets.AWS_DEMO_ACCOUNT_ID }}]' ."
         working-directory: ./packer
