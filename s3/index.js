@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { S3Client } from '@aws-sdk/client-s3';
 import { imageMimeTypes } from '../api/validations/media/mimeTypes.js';
 import _ from 'lodash';
@@ -17,14 +18,21 @@ const initClient = () => {
  * @returns {Object}
  */
 const uploadFile = async (Key, Bucket, file, multipartEnabled = false) => {
-  const { mimetype } = file;
+  const { mimetype, path } = file;
   if (!_.includes(imageMimeTypes, mimetype)) throw new AppError('Media type not supported', 400);
-  if (_.isEmpty(_.get(file, 'buffer', null))) throw new AppError('Malformed file', 400);
+  const fileContent = fs.readFileSync(path);
+  if (_.isEmpty(fileContent)) throw new AppError('Malformed file', 400);
+  // Append buffer
+  _.assign({ buffer: fileContent }, file);
+  let uploadResponse = {};
   if (multipartEnabled) {
-    return multipartUpload(Key, Bucket, file);
+    uploadResponse = await multipartUpload(Key, Bucket, file);
   } else {
-    return putObject(Key, Bucket, file);
+    uploadResponse = await putObject(Key, Bucket, file);
   }
+  // Remove file from disk
+  fs.unlinkSync(path);
+  return uploadResponse;
 };
 
 export default {
