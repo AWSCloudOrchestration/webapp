@@ -48,10 +48,40 @@ const deleteByProductId = {
   }),
 };
 
+const uploadImage = {
+  params: Joi.object().keys({
+    productId: Joi.number().integer().required(),
+  }),
+};
+
+const getAllImages = {
+  params: Joi.object().keys({
+    productId: Joi.number().integer().required(),
+  }),
+};
+
+const getImage = {
+  params: Joi.object().keys({
+    productId: Joi.number().integer().required(),
+    imageId: Joi.number().integer().required(),
+  }),
+};
+
+const deleteImage = {
+  params: Joi.object().keys({
+    productId: Joi.number().integer().required(),
+    imageId: Joi.number().integer().required(),
+  }),
+};
+
 export {
   getProductById,
   updateProduct,
   createProduct,
   patchProduct,
   deleteByProductId,
+  uploadImage,
+  getAllImages,
+  getImage,
+  deleteImage,
 };
