@@ -166,6 +166,7 @@ const getProductImageById = async (productId, imageId, user) => {
   await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
   const image = await ImageModel.findOne({ where: { image_id: imageId } });
+  if (!image) throw new AppError('Not Found', 404);
   return image;
 };
 
@@ -179,7 +180,7 @@ const deleteProductImage = async (productId, imageId, user) => {
   await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
   const image = await ImageModel.findOne({ where: { image_id: imageId } });
-  if (!image) throw new AppError('Image not found', 404);
+  if (!image) throw new AppError('Not Found', 404);
   await ImageModel.destroy({ where: { image_id: imageId } });
   const bucket = process.env.AWS_S3_BUCKET_NAME;
   await s3Client.deleteObject(_.get(image, 's3_bucket_path'), bucket);
