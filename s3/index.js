@@ -23,7 +23,7 @@ const uploadFile = async (Key, Bucket, file, multipartEnabled = false) => {
   const fileContent = fs.readFileSync(path);
   if (_.isEmpty(fileContent)) throw new AppError('Malformed file', 400);
   // Append buffer
-  _.assign({ buffer: fileContent }, file);
+  _.assign(file, { buffer: fileContent });
   let uploadResponse = {};
   if (multipartEnabled) {
     uploadResponse = await multipartUpload(Key, Bucket, file);
