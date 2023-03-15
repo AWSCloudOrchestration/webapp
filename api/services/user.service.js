@@ -22,7 +22,7 @@ const createUser = async (userPayload) => {
   if (existingUser.length > 0) throw new AppError('User already exists', 400);
   const hashedPass = await createHash(password);
   const user = await UserModel.create({ first_name, last_name, username, password: hashedPass });
-  return user;
+  return _.omit(_.get(user, 'dataValues'), ['password']);
 };
 
 /**
@@ -35,8 +35,8 @@ const getUserInfo = async (id, user) => {
   // Authorised user can only get own user info
   if (+(_.get(user, 'id')) !== +id) throw new AppError('Forbidden resource', 403);
   const UserModel = getModelInstance('users');
-  const userInfo = await UserModel.findOne({ where: { id } });
-  return _.get(userInfo, 'dataValues');
+  const userInfo = await UserModel.findOne({ where: { id }, attributes: { exclude: ['password'] } });
+  return userInfo;
 };
 
 
