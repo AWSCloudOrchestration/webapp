@@ -15,13 +15,13 @@ SyslogIdentifier=webapp-server
 User=ec2-user
 
 # variables
-Environment=PROD_SQL_USER=webapp
+Environment=SQL_USER=webapp
 Environment=NODE_ENV=production
 Environment=APP_PORT=3001
-Environment=PROD_SQL_HOST=localhost
-Environment=PROD_SQL_PASS=MyNewPass4!
-Environment=PROD_SQL_DB=webapp
-Environment=PROD_DB_DIALECT=mysql
+Environment=SQL_HOST=localhost
+Environment=SQL_PASS=MyNewPass4!
+Environment=SQL_DB=webapp
+Environment=DB_DIALECT=mysql
 
 [Install]
 WantedBy=multi-user.target

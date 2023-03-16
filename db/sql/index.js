@@ -10,11 +10,10 @@ let connection;
  * @returns {connection}
  */
 const createConnection = async () => {
-  const envPrefix = process.env.NODE_ENV === 'production' ? 'PROD' : 'DEV';
-  const database = process.env[`${envPrefix}_SQL_DB`];
-  const username = process.env[`${envPrefix}_SQL_USER`];
-  const password = process.env[`${envPrefix}_SQL_PASS`];
-  const host = process.env[`${envPrefix}_SQL_HOST`];
+  const database = process.env[`SQL_DB`];
+  const username = process.env[`SQL_USER`];
+  const password = process.env[`SQL_PASS`];
+  const host = process.env[`SQL_HOST`];
 
   const sequelize = new Sequelize(database, username, password, {
     host,
