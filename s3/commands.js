@@ -10,23 +10,22 @@ import {
 } from '@aws-sdk/client-s3';
 
 /**
- * Split file buffer into chunks with params for uploadPart
- * @param {Object} file
+ * Split file buffer into parts with params for uploadPart
+ * @param {Buffer} buffer
  * @param {String} Bucket
  * @param {String} Key
  * @param {String} UploadId
  * @returns {Object}
  */
-const collectFileParts = (file, Bucket, Key, UploadId) => {
-  const chunkSize = 1 * 1024 * 1024; // 1MB
-  const { buffer } = file;
-  const totalParts = Math.ceil(buffer.length / chunkSize);
+const collectFileParts = (buffer, Bucket, Key, UploadId) => {
+  const partSize = 5 * 1024 * 1024;
+  const totalParts = Math.ceil(buffer.length / partSize);
   const fileParts = [];
   for (let i = 0; i < totalParts; i++) {
-    const start = i * chunkSize;
-    const end = Math.min(start + chunkSize, buffer.length);
+    const start = i * partSize;
+    const end = Math.min(start + partSize, buffer.length);
     const partParams = {
-      Body: buffer.slice(start, end),
+      Body: buffer.subarray(start, end),
       Bucket,
       Key,
       PartNumber: i + 1,
@@ -43,10 +42,15 @@ const collectFileParts = (file, Bucket, Key, UploadId) => {
  * @param {String} Bucket
  * @param {Object} file
  * @returns {Object}
+ * Maximum object size 5 TiB
+ * Maximum number of parts per upload 10,000
+ * Part numbers 1 to 10,000 (inclusive)
+ * Part size 5 MiB to 5 GiB. There is no minimum size limit on the last part of your multipart upload.
+ * S3 Upload limits: https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
  */
 const multipartUpload = async (Key, Bucket, file) => {
   try {
-    const { mimetype } = file;
+    const { mimetype, buffer } = file;
     const client = s3Client.initClient();
     const params = {
       Key,
@@ -58,7 +62,7 @@ const multipartUpload = async (Key, Bucket, file) => {
     const createMultipartUploadCommand = new CreateMultipartUploadCommand(params);
     const { UploadId } = await client.send(createMultipartUploadCommand);
     // Upload parts
-    const fileParts = collectFileParts(file, Bucket, Key, UploadId);
+    const fileParts = collectFileParts(buffer, Bucket, Key, UploadId);
     const failedParts = [];
     const Parts = await Promise.all(_.map(fileParts, async (partParams, index) => {
       const command = new UploadPartCommand(partParams);

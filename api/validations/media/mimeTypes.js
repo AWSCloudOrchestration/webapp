@@ -75,6 +75,7 @@ const imageMimeTypes = [
   'image/wmf',
   'image/emf',
   'image/wmf',
+  'image/jpeg',
 ];
 
 export {
