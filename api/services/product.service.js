@@ -91,9 +91,11 @@ const deleteProduct = async (id, user) => {
   const ImageModel = getModelInstance('images');
   await checkIfUserIsForbidden(id, user);
   const images = await ImageModel.findAll({ where: { product_id: id } });
-  // Delete all images associated with the product
-  await deleteAllAssociatedS3Objects(images);
-  await ImageModel.destroy({ where: { product_id: id } });
+  if (!_.isEmpty(images)) {
+    // Delete all images associated with the product
+    await deleteAllAssociatedS3Objects(images);
+    await ImageModel.destroy({ where: { product_id: id } });
+  }
   await ProductModel.destroy({ where: { id } });
 };
 
