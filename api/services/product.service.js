@@ -70,14 +70,18 @@ const updateProduct = async (id, productBody, user) => {
 };
 
 /**
- * Delete all objects from s3 for the product
- * @param {Object} images
+ * Delete all objects from s3 and from db
+ * @param {Number} id productId
  */
-const deleteAllAssociatedS3Objects = async (images) => {
+const deleteAllAssociatedS3Objects = async (id) => {
+  const ImageModel = getModelInstance('images');
+  const images = await ImageModel.findAll({ where: { product_id: id } });
+  if (_.isEmpty(images)) return;
   const bucket = process.env.AWS_S3_BUCKET_NAME;
   const keys = _.map(images, (image) => {
     return { 'Key': image.s3_bucket_path };
   });
+  await ImageModel.destroy({ where: { product_id: id } });
   await s3Client.deleteObjects(keys, bucket);
 };
 
@@ -88,14 +92,8 @@ const deleteAllAssociatedS3Objects = async (images) => {
  */
 const deleteProduct = async (id, user) => {
   const ProductModel = getModelInstance('products');
-  const ImageModel = getModelInstance('images');
   await checkIfUserIsForbidden(id, user);
-  const images = await ImageModel.findAll({ where: { product_id: id } });
-  if (!_.isEmpty(images)) {
-    // Delete all images associated with the product
-    await deleteAllAssociatedS3Objects(images);
-    await ImageModel.destroy({ where: { product_id: id } });
-  }
+  await deleteAllAssociatedS3Objects(id);
   await ProductModel.destroy({ where: { id } });
 };
 
