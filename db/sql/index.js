@@ -10,14 +10,35 @@ let connection;
  * @returns {connection}
  */
 const createConnection = async () => {
-  const database = process.env[`SQL_DB`];
-  const username = process.env[`SQL_USER`];
-  const password = process.env[`SQL_PASS`];
-  const host = process.env[`SQL_HOST`];
+  const database = process.env.SQL_DB;
+  const username = process.env.SQL_USER;
+  const password = process.env.SQL_PASS;
+  const host = process.env.SQL_HOST;
+  const maxPoolConnections = process.env.SQL_MAX_POOL_CONN;
+  const maxRetries = process.env.SQL_CONN_MAX_RETRIES;
 
   const sequelize = new Sequelize(database, username, password, {
     host,
     dialect: 'mysql',
+    pool: {
+      max: +maxPoolConnections,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+    retry: {
+      max: +maxRetries,
+      timeout: 10000,
+      match: [
+        /SequelizeConnectionError/,
+        /SequelizeConnectionRefusedError/,
+        /SequelizeHostNotFoundError/,
+        /SequelizeHostNotReachableError/,
+        /SequelizeInvalidConnectionError/,
+        /SequelizeConnectionTimedOutError/,
+      ],
+      name: 'SQLConnector',
+    },
   });
   return sequelize;
 };
@@ -39,7 +60,7 @@ const initConnection = async () => {
     await connection.sync();
     console.log('MySQL connected.');
   } catch (err) {
-    console.error('MySQL connect failed: ', err);
+    console.error('SQLConnector error: ', err.message);
   }
 };
 
