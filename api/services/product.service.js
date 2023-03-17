@@ -37,21 +37,6 @@ const getProduct = async (id) => {
   return product;
 };
 
-const forbiddenResourceCondition = (productExistingInfo, user) => (+(_.get(productExistingInfo, 'owner_user_id')) !== +(_.get(user, 'id')));
-
-/**
- * Check if requesting user has access to update product
- * @param {String} id productId
- * @param {Object} user
- */
-const checkIfUserIsForbidden = async (id, user) => {
-  const ProductModel = getModelInstance('products');
-  const productExistingInfo = await ProductModel.findOne({ where: { id } });
-  // Check if product is in db
-  if (!productExistingInfo) throw new AppError('Product not found', 404);
-  if (forbiddenResourceCondition(productExistingInfo, user)) throw new AppError('Forbidden resource', 403);
-};
-
 /**
  * Update product
  * @param {String} id
@@ -59,9 +44,8 @@ const checkIfUserIsForbidden = async (id, user) => {
  * @param {Object} user
  * @returns {Object}
  */
-const updateProduct = async (id, productBody, user) => {
+const updateProduct = async (id, productBody) => {
   const ProductModel = getModelInstance('products');
-  await checkIfUserIsForbidden(id, user);
   await ProductModel.update({ ...productBody }, { where: { id } }).catch((err) => {
     if (_.get(err, 'parent.errno') === 1062) throw new AppError('sku must be unique', 400);
   });
@@ -88,11 +72,9 @@ const deleteAllAssociatedS3Objects = async (id) => {
 /**
  * Delete product
  * @param {String} id
- * @param {Object} user
  */
-const deleteProduct = async (id, user) => {
+const deleteProduct = async (id) => {
   const ProductModel = getModelInstance('products');
-  await checkIfUserIsForbidden(id, user);
   await deleteAllAssociatedS3Objects(id);
   await ProductModel.destroy({ where: { id } });
 };
@@ -101,13 +83,11 @@ const deleteProduct = async (id, user) => {
  * Patch product info
  * @param {String} id
  * @param {Object} productBody
- * @param {Object} user
  * @returns {Object}
  */
-const patchProduct = async (id, productBody, user) => {
+const patchProduct = async (id, productBody) => {
   const updateBody = {};
   const ProductModel = getModelInstance('products');
-  await checkIfUserIsForbidden(id, user);
   _.forEach(productBody, (value, key) => {
     if (_.isEmpty(value)) return;
     updateBody[key] = value;
@@ -125,9 +105,8 @@ const patchProduct = async (id, productBody, user) => {
  * @param {String} productId
  * @returns
  */
-const addProductImage = async (file, productId, user) => {
+const addProductImage = async (file, productId) => {
   if (_.isEmpty(file)) throw new AppError('No file data provided', 400);
-  await checkIfUserIsForbidden(productId, user);
   const ImageModel = getModelInstance('images');
   const uniqKey = uuidv4();
   const key = `${uniqKey}/${file.originalname}`;
@@ -148,8 +127,7 @@ const addProductImage = async (file, productId, user) => {
  * @param {String} ownerUserId
  * @returns
  */
-const getAllProductImages = async (productId, user) => {
-  await checkIfUserIsForbidden(productId, user);
+const getAllProductImages = async (productId) => {
   const ImageModel = getModelInstance('images');
   const image = await ImageModel.findAll({ where: { product_id: productId } });
   return image;
@@ -157,13 +135,10 @@ const getAllProductImages = async (productId, user) => {
 
 /**
  * Get product image by id
- * @param {String} productId
  * @param {String} imageId
- * @param {Object} user
  * @returns {Object}
  */
-const getProductImageById = async (productId, imageId, user) => {
-  await checkIfUserIsForbidden(productId, user);
+const getProductImageById = async (imageId) => {
   const ImageModel = getModelInstance('images');
   const image = await ImageModel.findOne({ where: { image_id: imageId } });
   if (!image) throw new AppError('Not Found', 404);
@@ -176,8 +151,7 @@ const getProductImageById = async (productId, imageId, user) => {
  * @param {String} imageId
  * @param {Object} user
  */
-const deleteProductImage = async (productId, imageId, user) => {
-  await checkIfUserIsForbidden(productId, user);
+const deleteProductImage = async (imageId) => {
   const ImageModel = getModelInstance('images');
   const image = await ImageModel.findOne({ where: { image_id: imageId } });
   if (!image) throw new AppError('Not Found', 404);
