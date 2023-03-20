@@ -10,6 +10,34 @@ sudo systemctl status nginx
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
+# Install CloudWatch
+sudo yum install amazon-cloudwatch-agent -y
+sudo touch /opt/cloudwatch-config.json
+sudo bash -c 'cat > /opt/cloudwatch-config.json <<EOF
+{
+  "agent": {
+      "metrics_collection_interval": 10,
+      "logfile": "/var/logs/amazon-cloudwatch-agent.log"
+  },
+  "metrics":{
+    "namespace":"WebappMetrics",
+    "metrics_collected":{
+       "statsd":{
+          "service_address":":8125",
+          "metrics_collection_interval":15,
+          "metrics_aggregation_interval":300
+       }
+    }
+ }
+} 
+EOF'
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a fetch-config \
+    -m ec2 \
+    -c file:/opt/cloudwatch-config.json \
+    -s
+
+
 # NVM install
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 source ~/.bashrc
