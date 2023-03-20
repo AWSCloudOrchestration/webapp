@@ -1,0 +1,65 @@
+import _ from 'lodash';
+import { createLogger, format, transports } from 'winston';
+import 'winston-daily-rotate-file';
+
+const logLevels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  verbose: 4,
+  debug: 5,
+};
+
+const getLevels = () => {
+  const env = process.env.NODE_ENV;
+  if (env === 'production') {
+    return _.pick(logLevels, ['error', 'warn', 'info']);
+  } else if (env === 'development') {
+    return logLevels;
+  }
+};
+
+const addRequestData = format((info) => {
+  const { method, url } = info;
+  const data = {
+    method,
+    url,
+  };
+  _.assign(info, data);
+  return info;
+});
+
+const logger = createLogger({
+  format: format.combine(
+      addRequestData(),
+      format.timestamp(),
+      format.json(),
+  ),
+  levels: getLevels(),
+  exitOnError: false,
+  transports: [
+    // App logs
+    new transports.DailyRotateFile({
+      filename: 'webapp-%DATE%.log',
+      datePattern: 'YYYY-MM-DD-HH',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '7d',
+      utc: true,
+      dirname: process.env.APP_LOGS_DIRNAME || '/tmp/webapp',
+    }),
+    // Error logs
+    new transports.DailyRotateFile({
+      level: 'error',
+      filename: 'webapp-errors-%DATE%.log',
+      datePattern: 'YYYY-MM-DD-HH',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '7d',
+      utc: true,
+      dirname: process.env.APP_ERROR_LOGS_DIRNAME || '/tmp/webapp',
+    })],
+});
+
+export default logger;
