@@ -1,3 +1,5 @@
+import { statsDClient } from '../../statsd/index.js';
+
 /**
  * Error handler
  * All errors propagated from lower levels handled here centrally
@@ -9,6 +11,7 @@
 const centralErrorHandler = (error, res) => {
   // Log to file
   console.error('CentralErrorHandler: ', error);
+  statsDClient.increment('.5xx.error.count');
   res.sendStatus(500);
 };
 

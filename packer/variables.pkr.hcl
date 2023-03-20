@@ -62,7 +62,7 @@ variable "aws_subnet_id" {
 }
 
 variable "aws_ami_users" {
-  type = list(string)
+  type    = list(string)
   default = null
 }
 

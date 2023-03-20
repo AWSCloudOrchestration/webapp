@@ -40,6 +40,8 @@ export default {
   uploadFile,
   deleteObject,
   deleteObjects,
+  multipartUpload,
+  putObject,
 };
 
 
