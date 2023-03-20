@@ -1,4 +1,5 @@
 import { statsDClient } from '../../statsd/index.js';
+import logger from '../../logger/index.js';
 
 /**
  * Error handler
@@ -10,7 +11,7 @@ import { statsDClient } from '../../statsd/index.js';
  */
 const centralErrorHandler = (error, res) => {
   // Log to file
-  console.error('CentralErrorHandler: ', error);
+  logger.error(error);
   statsDClient.increment('.5xx.error.count');
   res.sendStatus(500);
 };
