@@ -1,5 +1,4 @@
 import { statsDClient } from '../../statsd/index.js';
-import logger from '../../logger/index.js';
 
 /**
  * API calls counter
@@ -17,7 +16,6 @@ const countAllApiCalls = (method, url) => {
 const metricsMiddleware = (req, res, next) => {
   const { method, url } = req;
   countAllApiCalls(method, url);
-  logger.info(`${method} ${url}`, { method, url });
   next();
 };
 

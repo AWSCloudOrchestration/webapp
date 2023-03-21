@@ -1,3 +1,5 @@
+import logger from '../../logger/index.js';
+
 /**
  * Error handling middleware
  *  - If known errors with defined error code, send response (catchAsync -> Middleware)
@@ -13,6 +15,7 @@ const errorHandlerMiddleware = (error, req, res, next) => {
   const { code, message } = error;
   if (!code) return next(error); // Propagate to central error handler
   res.status(code).send({ error: message });
+  logger.logRequest(req, code);
 };
 
 export default errorHandlerMiddleware;
