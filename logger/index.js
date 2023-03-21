@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
+import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 
 const logLevels = {
   error: 0,
@@ -52,7 +54,7 @@ const logger = createLogger({
     // Error logs
     new transports.DailyRotateFile({
       level: 'error',
-      filename: 'webapp-errors-%DATE%.log',
+      filename: 'errors-%DATE%.log',
       datePattern: 'YYYY-MM-DD-HH',
       zippedArchive: true,
       maxSize: '20m',
