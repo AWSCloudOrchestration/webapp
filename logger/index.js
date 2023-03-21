@@ -44,7 +44,7 @@ const logger = createLogger({
     // App logs
     new transports.DailyRotateFile({
       filename: 'webapp-%DATE%.log',
-      datePattern: 'YYYY-MM-DD-HH',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '7d',
@@ -55,7 +55,7 @@ const logger = createLogger({
     new transports.DailyRotateFile({
       level: 'error',
       filename: 'errors-%DATE%.log',
-      datePattern: 'YYYY-MM-DD-HH',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '7d',
@@ -63,5 +63,19 @@ const logger = createLogger({
       dirname: process.env.APP_ERROR_LOGS_DIRNAME || '/tmp/webapp',
     })],
 });
+
+const removeSensitiveData = (body) => {
+  const sensitiveKeys = ['password'];
+  return _.omit(body, sensitiveKeys);
+};
+
+const logRequest = (req, statusCode) => {
+  let level = 'info';
+  if (statusCode >= 400 && statusCode < 600) level = 'error';
+  const { body, params, query, method, url } = req;
+  logger[level](`${method} ${url}`, { method, url, body: removeSensitiveData(body), params, query, statusCode });
+};
+
+logger.logRequest = logRequest;
 
 export default logger;
