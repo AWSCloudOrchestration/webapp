@@ -15,8 +15,8 @@ const countAllApiCalls = (method, url) => {
 };
 
 const metricsMiddleware = (req, res, next) => {
-  const { method, url } = req;
-  countAllApiCalls(method, url);
+  const { method, originalUrl } = req;
+  countAllApiCalls(method, originalUrl);
   next();
 };
 

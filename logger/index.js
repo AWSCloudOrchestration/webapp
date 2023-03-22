@@ -22,19 +22,8 @@ const getLevels = () => {
   }
 };
 
-const addRequestData = format((info) => {
-  const { method, url } = info;
-  const data = {
-    method,
-    url,
-  };
-  _.assign(info, data);
-  return info;
-});
-
 const logger = createLogger({
   format: format.combine(
-      addRequestData(),
       format.timestamp(),
       format.json(),
   ),
@@ -71,10 +60,10 @@ const removeSensitiveData = (body) => {
 
 const logRequest = (req, statusCode, error) => {
   let level = 'info';
-  const { body, method, url } = req;
+  const { body, method, originalUrl } = req;
   const logData = {
     method,
-    url,
+    url: originalUrl,
     body: removeSensitiveData(body),
     statusCode,
   };
@@ -82,7 +71,7 @@ const logRequest = (req, statusCode, error) => {
     level = 'error';
     logData.error = error;
   }
-  logger[level](`${method} ${url}`, logData);
+  logger[level](`${method} ${originalUrl}`, logData);
 };
 
 logger.logRequest = logRequest;
