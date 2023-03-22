@@ -15,7 +15,7 @@ const errorHandlerMiddleware = (error, req, res, next) => {
   const { code, message } = error;
   if (!code) return next(error); // Propagate to central error handler
   res.status(code).send({ error: message });
-  logger.logRequest(req, code);
+  logger.logRequest(req, code, message);
 };
 
 export default errorHandlerMiddleware;

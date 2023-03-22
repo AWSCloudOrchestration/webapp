@@ -69,11 +69,20 @@ const removeSensitiveData = (body) => {
   return _.omit(body, sensitiveKeys);
 };
 
-const logRequest = (req, statusCode) => {
+const logRequest = (req, statusCode, error) => {
   let level = 'info';
-  if (statusCode >= 400 && statusCode < 600) level = 'error';
-  const { body, params, query, method, url } = req;
-  logger[level](`${method} ${url}`, { method, url, body: removeSensitiveData(body), params, query, statusCode });
+  const { body, method, url } = req;
+  const logData = {
+    method,
+    url,
+    body: removeSensitiveData(body),
+    statusCode,
+  };
+  if (statusCode >= 400 && statusCode < 600) {
+    level = 'error';
+    logData.error = error;
+  }
+  logger[level](`${method} ${url}`, logData);
 };
 
 logger.logRequest = logRequest;
