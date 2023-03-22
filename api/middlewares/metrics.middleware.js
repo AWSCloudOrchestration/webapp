@@ -10,6 +10,7 @@ const countAllApiCalls = (method, url) => {
   let metricName = `_${method.toLowerCase()}_${url}_count`;
   if (!statsPrefix) metricName = metricName.slice(1);
   const generalizedName = metricName.replace(/\/\d+/g, '{id}');
+  if (!statsDClient) return;
   statsDClient.increment(generalizedName);
 };
 
