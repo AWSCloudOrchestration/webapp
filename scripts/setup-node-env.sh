@@ -6,12 +6,14 @@ sudo yum upgrade -y
 
 # Install NGINX
 sudo amazon-linux-extras install nginx1 -y
-sudo systemctl status nginx
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
 # Install CloudWatch
 sudo yum install amazon-cloudwatch-agent -y
+sudo systemctl enable amazon-cloudwatch-agent.service
+sudo systemctl start amazon-cloudwatch-agent.service
+
 sudo touch /opt/cloudwatch-config.json
 sudo bash -c 'cat > /opt/cloudwatch-config.json <<EOF
 {
@@ -36,11 +38,7 @@ sudo bash -c 'cat > /opt/cloudwatch-config.json <<EOF
   "metrics":{
     "namespace":"WebappMetrics",
     "metrics_collected":{
-       "statsd":{
-          "service_address":":8125",
-          "metrics_collection_interval":15,
-          "metrics_aggregation_interval":300
-       }
+       "statsd":{}
     }
  }
 } 
@@ -50,6 +48,7 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
     -m ec2 \
     -c file:/opt/cloudwatch-config.json \
     -s
+sudo systemctl restart amazon-cloudwatch-agent.service
 
 
 # NVM install
