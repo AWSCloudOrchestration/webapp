@@ -43,13 +43,6 @@ sudo bash -c 'cat > /opt/cloudwatch-config.json <<EOF
  }
 } 
 EOF'
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-    -a fetch-config \
-    -m ec2 \
-    -c file:/opt/cloudwatch-config.json \
-    -s
-sudo systemctl restart amazon-cloudwatch-agent.service
-
 
 # NVM install
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
