@@ -17,31 +17,36 @@ sudo systemctl start amazon-cloudwatch-agent.service
 sudo touch /opt/cloudwatch-config.json
 sudo bash -c 'cat > /opt/cloudwatch-config.json <<EOF
 {
-  "agent": {
-      "metrics_collection_interval": 10,
-      "logfile": "/var/logs/amazon-cloudwatch-agent.log"
-  },
-  "logs": {
-      "logs_collected": {
-          "files": {
-              "collect_list": [
-                  {
-                      "file_path": "/var/log/webapp/*.log",
-                      "log_group_name": "csye6225",
-                      "log_stream_name": "webapp"
-                  }
-              ]
-          }
-      },
-      "log_stream_name": "cloudwatch_log_stream"
-  },
-  "metrics":{
-    "namespace":"WebappMetrics",
-    "metrics_collected":{
-       "statsd":{}
+    "agent": {
+        "metrics_collection_interval": 10,
+        "logfile": "/var/logs/amazon-cloudwatch-agent.log"
+    },
+    "logs": {
+        "logs_collected": {
+            "files": {
+                "collect_list": [
+                    {
+                        "file_path": "/var/log/webapp/webapp-*.log",
+                        "log_group_name": "csye6225",
+                        "log_stream_name": "webapp"
+                    },
+                    {
+                        "file_path": "/var/log/webapp/errors-*.log",
+                        "log_group_name": "csye6225",
+                        "log_stream_name": "errors"
+                    }
+                ]
+            }
+        },
+        "log_stream_name": "cloudwatch_log_stream"
+    },
+    "metrics": {
+        "namespace": "csye6225",
+        "metrics_collected": {
+            "statsd": {}
+        }
     }
- }
-} 
+}
 EOF'
 
 # NVM install
