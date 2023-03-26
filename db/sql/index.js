@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize';
 import { userModel } from '../../api/models/user.model.js';
 import { productModel } from '../../api/models/product.model.js';
 import { imageModel } from '../../api/models/image.model.js';
+import logger from '../../logger/index.js';
 
 let connection;
 
@@ -59,8 +60,10 @@ const initConnection = async () => {
     await connection.authenticate();
     await connection.sync();
     console.log('MySQL connected.');
+    logger.info('MySQL connected.');
   } catch (err) {
     console.error('SQLConnector error: ', err.message);
+    logger.error('SQLConnector error: ', { error: err.stack });
   }
 };
 

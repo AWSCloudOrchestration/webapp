@@ -1,4 +1,5 @@
 import { StatsD } from 'node-statsd';
+import logger from '../logger/index.js';
 
 let statsDClient = {};
 
@@ -16,6 +17,7 @@ const initStatsDClient = () => {
     statsDClient = new StatsD(options);
   } catch (err) {
     console.error('StatsD error: ', err);
+    logger.error('StatsD error: ', { error: err.stack });
   }
 };
 
