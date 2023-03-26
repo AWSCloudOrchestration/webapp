@@ -8,6 +8,7 @@ import {
   PutObjectCommand,
   DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
+import logger from '../logger/index.js';
 
 /**
  * Split file buffer into parts with params for uploadPart
@@ -89,6 +90,7 @@ const multipartUpload = async (Key, Bucket, file) => {
  */
 const putObject = (Key, Bucket, file) => {
   const { mimetype, buffer } = file;
+  logger.info(`Uploading object of type: ${mimetype}`);
   const client = s3Client.initClient();
   const command = new PutObjectCommand({ Key, Bucket, Body: buffer, ContentType: mimetype });
   return client.send(command);
@@ -101,6 +103,7 @@ const putObject = (Key, Bucket, file) => {
  * @returns {Object}
  */
 const deleteObject = async (Key, Bucket) => {
+  logger.info('Deleting s3 object');
   const client = s3Client.initClient();
   const command = new DeleteObjectCommand({ Key, Bucket });
   return client.send(command);
@@ -113,6 +116,7 @@ const deleteObject = async (Key, Bucket) => {
  * @returns {Object}
  */
 const deleteObjects = async (Objects, Bucket) => {
+  logger.info('Deleting s3 objects');
   const client = s3Client.initClient();
   const params = {
     Bucket,

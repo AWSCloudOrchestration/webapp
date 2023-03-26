@@ -11,7 +11,7 @@ import logger from '../../logger/index.js';
  */
 const centralErrorHandler = (error, res) => {
   // Log to file
-  logger.error(error.stack);
+  logger.error('CentralErrorHandler', { error: error.stack });
   console.error(error);
   statsDClient.increment('.5xx.error.count');
   res.sendStatus(500);
