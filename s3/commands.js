@@ -77,7 +77,7 @@ const multipartUpload = async (Key, Bucket, file) => {
     });
     return client.send(completeMultipartUploadCommand);
   } catch (err) {
-    console.error('AWS S3 Client error: ', err);
+    logger.error('AWS S3 Client error: ', err);
   }
 };
 

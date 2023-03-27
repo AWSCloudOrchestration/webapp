@@ -15,17 +15,15 @@ const server = app.listen(port, async () => {
 });
 
 const gracefulShutdown = () => {
-  if (server) {
-    server.close(async (err) => {
-      if (err) {
-        logger.error('Shutting down with error: ', { error: err.stack });
-        process.exitCode = 1;
-      }
-      await closeSqlConn();
-      closeStatsDClient();
-      process.exit();
-    });
-  }
+  server.close(async (err) => {
+    if (err) {
+      logger.error('Shutting down with error: ', { error: err.stack });
+      process.exitCode = 1;
+    }
+    await closeSqlConn();
+    closeStatsDClient();
+    process.exit();
+  });
 };
 
 process.on('uncaughtException', (error) => {
