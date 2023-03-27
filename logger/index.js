@@ -22,6 +22,14 @@ const getLevels = () => {
   }
 };
 
+const formatConsole = format.printf(({ level, message, timestamp, ...metadata }) => {
+  let meta = '';
+  if (_.keys(metadata).length > 0) {
+    meta = JSON.stringify(metadata);
+  }
+  return `[${level}] [${timestamp}] ${message} ${meta}`;
+});
+
 const logger = createLogger({
   format: format.combine(
       format.timestamp(),
@@ -50,6 +58,14 @@ const logger = createLogger({
       maxFiles: '7d',
       utc: true,
       dirname: process.env.APP_ERROR_LOGS_DIRNAME || '/tmp/webapp',
+    }),
+    new transports.Console({
+      format: process.env.NODE_ENV !== 'production' ? format.combine(
+          format.colorize(),
+          formatConsole,
+      ): format.combine(
+          formatConsole,
+      ),
     })],
 });
 
