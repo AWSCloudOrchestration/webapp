@@ -59,15 +59,21 @@ const initConnection = async () => {
     await loadModels();
     await connection.authenticate();
     await connection.sync();
-    console.log('MySQL connected.');
     logger.info('MySQL connected.');
   } catch (err) {
-    console.error('SQLConnector error: ', err.message);
     logger.error('SQLConnector error: ', { error: err.stack });
   }
 };
 
+/**
+ * Close connection
+ */
+const closeConnection = async () => {
+  await connection.close();
+};
+
 export {
   initConnection as initSqlConn,
+  closeConnection as closeSqlConn,
   connection,
 };

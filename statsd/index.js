@@ -21,8 +21,16 @@ const initStatsDClient = () => {
   }
 };
 
+/**
+ * Close connection
+ */
+const closeStatsDClient = () => {
+  statsDClient.close();
+};
+
 export {
   initStatsDClient,
+  closeStatsDClient,
   statsDClient,
 };
 
