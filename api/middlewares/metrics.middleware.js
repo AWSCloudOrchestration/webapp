@@ -6,9 +6,7 @@ import { statsDClient } from '../../statsd/index.js';
  * @param {String} url
  */
 const countAllApiCalls = (method, url) => {
-  const statsPrefix = process.env.STATSD_PREFIX;
-  let metricName = `_${method.toLowerCase()}_${url}_count`;
-  if (!statsPrefix) metricName = metricName.slice(1);
+  const metricName = `${method.toLowerCase()}_${url}_count`;
   const generalizedName = metricName.replace(/\/\d+/g, '/{id}');
   if (!statsDClient) return;
   statsDClient.increment(generalizedName);
