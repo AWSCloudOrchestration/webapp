@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import centralErrorHandler from './utils/centralErrorHandler.js';
 import errorHandlerMiddleware from './middlewares/error.middleware.js';
 import metricsMiddleware from './middlewares/metrics.middleware.js';
+import responseHandler from './utils/responseHandler.js';
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use((err, req, res, next) => {
 
 // Healthcheck endpoint
 app.get('/healthz', (req, res) => {
-  res.sendStatus(200);
+  responseHandler(req, res, null, 200);
 });
 
 export default app;
