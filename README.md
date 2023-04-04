@@ -1,4 +1,4 @@
-# Assignment 2: Web Application Development
+# Web Application Development
 
 **Name:** Kaushik Gnanasekar \
 **Email:** gnanasekar.ka@northeastern.edu \
