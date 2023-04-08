@@ -1,6 +1,6 @@
 name: Build custom AMI
 on:
-  push:
+  pull_request:
     branches: ["main"]
 
 jobs:
@@ -52,3 +52,7 @@ jobs:
         id: build
         run: "packer build -var-file='variables.pkrvars.hcl' -var 'aws_ami_users=[${{ secrets.AWS_DEMO_ACCOUNT_ID }}]' ."
         working-directory: ./packer
+
+      - name: Update Launch Template and start instance refresh
+        id: updateLaunchTemplateAndRefreshInstance
+        run: bash scripts/update-launch-template.sh
