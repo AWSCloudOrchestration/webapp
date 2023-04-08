@@ -56,3 +56,7 @@ jobs:
       - name: Update Launch Template and start instance refresh
         id: updateLaunchTemplateAndRefreshInstance
         run: bash scripts/update-launch-template.sh
+        env:
+          LAUNCH_TEMPLATE_NAME: ${{ secrets.LAUNCH_TEMPLATE_NAME }}
+          AUTOSCALING_GROUP_NAME: ${{ secrets.AUTOSCALING_GROUP_NAME }}
+
