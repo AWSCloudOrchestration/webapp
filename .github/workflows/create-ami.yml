@@ -25,8 +25,8 @@ jobs:
       - name: Run Unit tests  
         run: npm test  
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials for Packer
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,6 +52,13 @@ jobs:
         id: build
         run: "packer build -var-file='variables.pkrvars.hcl' -var 'aws_ami_users=[${{ secrets.AWS_DEMO_ACCOUNT_ID }}]' ."
         working-directory: ./packer
+
+      - name: Configure AWS Credentials for launch template update
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AS_AWS_REGION }}
 
       - name: Update Launch Template and start instance refresh
         id: updateLaunchTemplateAndRefreshInstance
