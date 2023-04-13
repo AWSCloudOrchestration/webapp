@@ -6,6 +6,7 @@ import centralErrorHandler from './utils/centralErrorHandler.js';
 import errorHandlerMiddleware from './middlewares/error.middleware.js';
 import metricsMiddleware from './middlewares/metrics.middleware.js';
 import responseHandler from './utils/responseHandler.js';
+import ip from 'ip';
 
 const app = express();
 
@@ -26,6 +27,10 @@ app.use((err, req, res, next) => {
 // Healthcheck endpoint
 app.get('/healthz', (req, res) => {
   responseHandler(req, res, null, 200);
+});
+
+app.get('/test', (req, res) => {
+  responseHandler(req, res, { ip: ip.address(), timestamp: new Date() }, 200);
 });
 
 export default app;
