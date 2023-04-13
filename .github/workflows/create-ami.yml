@@ -1,6 +1,6 @@
 name: Build custom AMI
 on:
-  pull_request:
+  push:
     branches: ["main"]
 
 jobs:
