@@ -50,35 +50,31 @@ const collectFileParts = (buffer, Bucket, Key, UploadId) => {
  * S3 Upload limits: https://docs.aws.amazon.com/AmazonS3/latest/userguide/qfacts.html
  */
 const multipartUpload = async (Key, Bucket, file) => {
-  try {
-    const { mimetype, buffer } = file;
-    const client = s3Client.initClient();
-    const params = {
-      Key,
-      Bucket,
-      ContentType: mimetype,
-    };
+  const { mimetype, buffer } = file;
+  const client = s3Client.initClient();
+  const params = {
+    Key,
+    Bucket,
+    ContentType: mimetype,
+  };
 
-    // Get UploadId
-    const createMultipartUploadCommand = new CreateMultipartUploadCommand(params);
-    const { UploadId } = await client.send(createMultipartUploadCommand);
-    // Upload parts
-    const fileParts = collectFileParts(buffer, Bucket, Key, UploadId);
-    const failedParts = [];
-    const Parts = await Promise.all(_.map(fileParts, async (partParams, index) => {
-      const command = new UploadPartCommand(partParams);
-      const response = await client.send(command);
-      if (response && _.get(response, '$metadata.httpStatusCode') === 200) {
-        return { ETag: response.ETag, PartNumber: index + 1 };
-      } else failedParts.push(partParams); // Add retry logic here
-    }));
-    const completeMultipartUploadCommand = new CompleteMultipartUploadCommand({
-      Bucket, Key, UploadId, MultipartUpload: { Parts },
-    });
-    return client.send(completeMultipartUploadCommand);
-  } catch (err) {
-    logger.error('AWS S3 Client error: ', err);
-  }
+  // Get UploadId
+  const createMultipartUploadCommand = new CreateMultipartUploadCommand(params);
+  const { UploadId } = await client.send(createMultipartUploadCommand);
+  // Upload parts
+  const fileParts = collectFileParts(buffer, Bucket, Key, UploadId);
+  const failedParts = [];
+  const Parts = await Promise.all(_.map(fileParts, async (partParams, index) => {
+    const command = new UploadPartCommand(partParams);
+    const response = await client.send(command);
+    if (response && _.get(response, '$metadata.httpStatusCode') === 200) {
+      return { ETag: response.ETag, PartNumber: index + 1 };
+    } else failedParts.push(partParams); // Add retry logic here
+  }));
+  const completeMultipartUploadCommand = new CompleteMultipartUploadCommand({
+    Bucket, Key, UploadId, MultipartUpload: { Parts },
+  });
+  return client.send(completeMultipartUploadCommand);
 };
 
 /**

@@ -29,7 +29,7 @@ app.get('/healthz', (req, res) => {
   responseHandler(req, res, null, 200);
 });
 
-app.get('/virendra', (req, res) => {
+app.get('/health', (req, res) => {
   responseHandler(req, res, { ip: ip.address(), timestamp: new Date() }, 200);
 });
 
