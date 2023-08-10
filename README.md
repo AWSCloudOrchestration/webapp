@@ -1,8 +1,7 @@
-# Web Application Development
+# CLoud Native Web Application Development
 
 **Name:** Kaushik Gnanasekar \
-**Email:** gnanasekar.ka@northeastern.edu \
-**NUID:** 002766012
+**Email:** gnanasekar.ka@northeastern.edu
 
 ## Clone the repository
 ```
