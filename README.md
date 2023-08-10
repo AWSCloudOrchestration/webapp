@@ -6,7 +6,7 @@
 
 ## Clone the repository
 ```
-git clone git@github.com:kaushikgnanasekar-csye6225/webapp.git
+git clone git@github.com:AWSCloudOrchestration/webapp.git
 ```
 
 ## Prerequisites
