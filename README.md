@@ -1,4 +1,4 @@
-# CLoud Native Web Application Development
+# Cloud Native Web Application Development
 
 **Name:** Kaushik Gnanasekar \
 **Email:** gnanasekar.ka@northeastern.edu
